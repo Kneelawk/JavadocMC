@@ -6,9 +6,11 @@ on:
       vanilla-loom-enabled:
         description: Loom Vanilla Enabled
         type: boolean
+        default: true
       vanilla-neogradle-enabled:
         description: NeoGradle Vanilla Enabled
         type: boolean
+        default: true
       minecraft-version:
         description: Minecraft Version
         type: string
@@ -21,6 +23,7 @@ on:
       build-number:
         description: Build Number
         type: number
+        default: 1
 
 jobs:
   publish:
