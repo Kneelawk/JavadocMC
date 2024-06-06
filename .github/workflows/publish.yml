@@ -40,6 +40,6 @@ jobs:
       - name: Build Vanilla Loom Javadoc
         if: ${{ github.event.inputs.vanilla-loom-enabled }}
         run: ./gradlew :mojmap-vanilla-loom:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
-      - name: Build Vanilla Loom Javadoc
+      - name: Build Vanilla NeoGradle Javadoc
         if: ${{ github.event.inputs.vanilla-neogradle-enabled }}
         run: ./gradlew :mojmap-vanilla-neogradle:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
