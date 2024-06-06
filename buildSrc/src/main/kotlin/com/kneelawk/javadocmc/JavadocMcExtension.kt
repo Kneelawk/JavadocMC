@@ -3,7 +3,6 @@ package com.kneelawk.javadocmc
 import com.kneelawk.getProperty
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.neoforged.gradle.dsl.common.extensions.subsystems.Subsystems
-import net.neoforged.gradle.dsl.common.util.DistributionType
 import net.neoforged.gradle.vanilla.runtime.extensions.VanillaRuntimeExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
@@ -156,18 +155,20 @@ abstract class JavadocMcExtension(val project: Project) {
             }
         }
 
-        val vanillaRuntimeExtension = project.extensions.getByType(VanillaRuntimeExtension::class)
-        val runtimeDefinition = vanillaRuntimeExtension.maybeCreate {
-            withMinecraftArtifact("Client")
-            withDistributionType(DistributionType.CLIENT)
-            val minecraft_version: String by project
-            withMinecraftVersion(minecraft_version)
-            withFartVersion(vanillaRuntimeExtension.fartVersion)
-            withForgeFlowerVersion(vanillaRuntimeExtension.vineFlowerVersion)
-            withAccessTransformerApplierVersion(vanillaRuntimeExtension.accessTransformerApplierVersion)
+        val minecraft_version: String by project
+        val minecraftDependency = project.dependencies.create("net.minecraft:client:$minecraft_version")
+        val jetbrains_annotations_version: String by project
+
+        project.dependencies {
+            add("implementation", minecraftDependency)
+
+            add("compileOnly", "org.jetbrains:annotations:$jetbrains_annotations_version")
         }
-        
-        project.tasks.named<PatchSourcesTask>("patchSources").configure { 
+
+        val vanillaRuntimeExtension = project.extensions.getByType(VanillaRuntimeExtension::class)
+        val runtimeDefinition = vanillaRuntimeExtension.definitions.values.first()
+
+        project.tasks.named<PatchSourcesTask>("patchSources").configure {
             dependsOn(runtimeDefinition.sourceJarTask)
             from(project.zipTree(runtimeDefinition.sourceJarTask.get().output))
         }

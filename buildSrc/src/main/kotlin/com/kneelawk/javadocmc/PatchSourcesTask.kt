@@ -58,6 +58,13 @@ open class PatchSourcesTask @Inject constructor(private val executor: WorkerExec
     }
 
     abstract class ParallelWorker : WorkAction<FixDecompileParameters> {
+        companion object {
+            private val abstractArrowRegex =
+                Regex("""SwitchBootstraps\.typeSwitch<"typeSwitch",Player,OminousItemSpawner>\([a-zA-Z0-9]+, [a-zA-Z0-9]+\)""")
+            private val worldPresetsRegex =
+                Regex("""SwitchBootstraps\.typeSwitch<"typeSwitch",FlatLevelSource,DebugLevelSource,NoiseBasedChunkGenerator>\([a-zA-Z0-9]+, [a-zA-Z0-9]+\)""")
+        }
+
         override fun execute() {
             val source = parameters.sourceFile.get().asFile
             val destination = parameters.destinationFile.get().asFile
@@ -75,7 +82,7 @@ open class PatchSourcesTask @Inject constructor(private val executor: WorkerExec
 
                 if (inRecord) {
                     if (line.contains('@') && !line.endsWith(';')) {
-                        annotationBuilder.append(line).append(' ')
+                        annotationBuilder.append(line).append('\n')
                         skip = true
                     }
                     if (line.contains("final") && !line.contains("static") && line.endsWith(';')) {
@@ -100,11 +107,11 @@ open class PatchSourcesTask @Inject constructor(private val executor: WorkerExec
                     var line = line.replace("EntityRendererProvider<>", "EntityRendererProvider<?>")
                     line = line.replace("(E[])(65, 70, 75, 80)", "new Integer[]{65, 70, 75, 80}")
                     line = line.replace(
-                        "SwitchBootstraps.typeSwitch<\"typeSwitch\",Player,OminousItemSpawner>(var2, var3)",
+                        abstractArrowRegex,
                         "0"
                     )
                     line = line.replace(
-                        "SwitchBootstraps.typeSwitch<\"typeSwitch\",FlatLevelSource,DebugLevelSource,NoiseBasedChunkGenerator>(chunkGenerator, i)",
+                        worldPresetsRegex,
                         "0"
                     )
                     builder.append(annotationBuilder.toString()).append(line).append('\n')
