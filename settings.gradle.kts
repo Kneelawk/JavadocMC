@@ -12,7 +12,7 @@ pluginManagement {
         maven("https://maven.neoforged.net/releases/") {
             name = "NeoForged"
         }
-        maven("https://kneelawk.com/maven/") {
+        maven("https://maven.kneelawk.com/releases/") {
             name = "Kneelawk"
         }
         mavenCentral()
@@ -28,8 +28,6 @@ pluginManagement {
         id("com.kneelawk.versioning") version versioning_version
         val kpublish_version: String by settings
         id("com.kneelawk.kpublish") version kpublish_version
-        val submodule_version: String by settings
-        id("com.kneelawk.submodule") version submodule_version
     }
 }
 
