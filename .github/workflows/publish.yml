@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+  workflow_dispatch: 
+    inputs: 
+      vanilla-loom-enabled:
+        description: Whether to run the vanilla loom javadoc
+        type: boolean
+      vanilla-neogradle-enabled:
+        description: Whether to run the vanilla neogradle javadoc
+        type: boolean
+      minecraft-version:
+        description: The minecraft version to generate the javadoc for
+        type: string
+      parchment-minecraft-version:
+        description: The minecraft version of parchment to use
+        type: string
+      parchment-version:
+        description: The parchment version to use
+        type: string
+      build-number:
+        description: This builds build number
+        type: number
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+      - name: Build Vanilla Loom Javadoc
+        if: ${{ github.event.inputs.vanilla-loom-enabled }}
+        run: ./gradlew :mojmap-vanilla-loom:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
+      - name: Build Vanilla Loom Javadoc
+        if: ${{ github.event.inputs.vanilla-neogradle-enabled }}
+        run: ./gradlew :mojmap-vanilla-neogradle:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}

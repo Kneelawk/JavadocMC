@@ -1,5 +1,4 @@
 plugins {
-    id("com.kneelawk.versioning")
     id("com.kneelawk.kpublish")
     id("com.kneelawk.javadocmc")
 }

@@ -18,8 +18,6 @@ abstract class JavadocMcExtension(val project: Project) {
 
         val loomEx = project.extensions.getByType(LoomGradleExtensionAPI::class)
 
-        project.group = project.getProperty("maven_group")
-
         project.repositories.apply {
             mavenCentral()
             maven("https://maven.quiltmc.org/repository/release") { name = "Quilt" }

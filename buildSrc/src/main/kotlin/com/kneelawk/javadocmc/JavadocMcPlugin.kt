@@ -21,6 +21,18 @@ class JavadocMcPlugin : Plugin<Project> {
 
         javaEx.toolchain.languageVersion.set(JavaLanguageVersion.of(project.getProperty<String>("java_version")))
 
+        project.group = project.getProperty("maven_group")
+
+        run {
+            val minecraftVersion = project.getProperty<String>("minecraft_version")
+            val parchmentMcVersion = project.getProperty<String>("parchment_mc_version")
+            val parchmentVersion = project.getProperty<String>("parchment_version")
+            val buildNumber = project.getProperty<String>("build_number")
+
+            project.version =
+                "${minecraftVersion}+parchment.${parchmentMcVersion}-${parchmentVersion}-build.${buildNumber}"
+        }
+
         val patchSources = project.tasks.create("patchSources", PatchSourcesTask::class) {
             into(project.layout.buildDirectory.dir("patchedMc"))
         }
