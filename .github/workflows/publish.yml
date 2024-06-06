@@ -4,22 +4,22 @@ on:
   workflow_dispatch: 
     inputs: 
       vanilla-loom-enabled:
-        description: Whether to run the vanilla loom javadoc
+        description: Loom Vanilla Enabled
         type: boolean
       vanilla-neogradle-enabled:
-        description: Whether to run the vanilla neogradle javadoc
+        description: NeoGradle Vanilla Enabled
         type: boolean
       minecraft-version:
-        description: The minecraft version to generate the javadoc for
+        description: Minecraft Version
         type: string
       parchment-minecraft-version:
-        description: The minecraft version of parchment to use
+        description: Parchment Minecraft Version
         type: string
       parchment-version:
-        description: The parchment version to use
+        description: Parchment Version
         type: string
       build-number:
-        description: This builds build number
+        description: Build Number
         type: number
 
 jobs:
