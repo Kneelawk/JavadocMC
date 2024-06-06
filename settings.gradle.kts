@@ -15,6 +15,7 @@ pluginManagement {
         maven("https://kneelawk.com/maven/") {
             name = "Kneelawk"
         }
+        mavenCentral()
         gradlePluginPortal()
     }
     plugins {
