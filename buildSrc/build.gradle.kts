@@ -2,7 +2,6 @@ plugins {
     id("java-gradle-plugin")
     kotlin("jvm") version "2.0.0"
     `kotlin-dsl`
-    antlr
 }
 
 repositories {
@@ -16,25 +15,18 @@ repositories {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.13.1")
+    val fabric_loom_version: String by project
+    implementation("fabric-loom:fabric-loom.gradle.plugin:$fabric_loom_version")
 
-    val architectury_loom_version: String by project
-    implementation("dev.architectury.loom:dev.architectury.loom.gradle.plugin:$architectury_loom_version")
+    val neogradle_version: String by project
+    implementation("net.neoforged.gradle.vanilla:net.neoforged.gradle.vanilla.gradle.plugin:$neogradle_version")
 }
 
 gradlePlugin {
     plugins {
-        create("javadocMcPlugin") {
+        create("javadocMcLoomPlugin") {
             id = "com.kneelawk.javadocmc"
             implementationClass = "com.kneelawk.javadocmc.JavadocMcPlugin"
         }
     }
 }
-
-tasks.generateGrammarSource.configure {
-    val pkg = "com.kneelawk.javadocmc"
-    arguments = arguments + listOf("-package", pkg)
-    outputDirectory = outputDirectory.resolve(pkg.split(".").joinToString("/"))
-}
-
-tasks.compileKotlin.get().dependsOn("generateGrammarSource")

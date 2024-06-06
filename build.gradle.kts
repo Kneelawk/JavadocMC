@@ -1,6 +1,7 @@
 plugins {
-    id("dev.architectury.loom") apply false
+    id("fabric-loom") apply false
     id("com.kneelawk.submodule") apply false
+    id("net.neoforged.gradle.vanilla") apply false
 }
 
 tasks.create("clean", Delete::class) {

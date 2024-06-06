@@ -18,8 +18,11 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        val architectury_loom_version: String by settings
-        id("dev.architectury.loom") version architectury_loom_version
+        val neogradle_version: String by settings
+        id("net.neoforged.gradle.vanilla") version neogradle_version
+        id("net.neoforged.gradle.userdev") version neogradle_version
+        val fabric_loom_version: String by settings
+        id("fabric-loom") version fabric_loom_version
         val versioning_version: String by settings
         id("com.kneelawk.versioning") version versioning_version
         val kpublish_version: String by settings
@@ -29,6 +32,11 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 rootProject.name = "javadoc-mc"
 
-include("vanilla")
+include("mojmap-vanilla-loom")
+include("mojmap-vanilla-neogradle")

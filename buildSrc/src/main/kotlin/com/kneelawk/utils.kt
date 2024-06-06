@@ -23,7 +23,7 @@
  *
  */
 
-package com.kneelawk.javadocmc
+package com.kneelawk
 
 import org.gradle.api.Project
 

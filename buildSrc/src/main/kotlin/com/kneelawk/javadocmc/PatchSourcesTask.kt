@@ -14,7 +14,7 @@ import org.gradle.workers.WorkerExecutor
 import java.io.File
 import javax.inject.Inject
 
-open class FixDecompileTask @Inject constructor(private val executor: WorkerExecutor) : DefaultTask() {
+open class PatchSourcesTask @Inject constructor(private val executor: WorkerExecutor) : DefaultTask() {
     @get:InputFiles
     val froms = mutableListOf<FileCollection>()
 
@@ -41,8 +41,10 @@ open class FixDecompileTask @Inject constructor(private val executor: WorkerExec
                 }
             } else {
                 for (file in fc.files) {
-                    val destination = File(into, file.name)
-                    submitWorker(file, destination)
+                    if (!file.isDirectory && file.name.endsWith(".java")) {
+                        val destination = File(into, file.name)
+                        submitWorker(file, destination)
+                    }
                 }
             }
         }

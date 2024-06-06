@@ -4,6 +4,10 @@ plugins {
     id("com.kneelawk.javadocmc")
 }
 
+javadocMc {
+    applyLoom()
+}
+
 dependencies {
     val fabric_loader_version: String by project
     add("modCompileOnly", "net.fabricmc:fabric-loader:$fabric_loader_version")
