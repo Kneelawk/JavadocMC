@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.JavadocMemberLevel
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -47,6 +48,11 @@ class JavadocMcPlugin : Plugin<Project> {
                 addBooleanOption("-ignore-source-errors", true)
                 addBooleanOption("Xdoclint:none", true)
                 addBooleanOption("quiet", true)
+
+                encoding = "UTF-8"
+                charSet = "UTF-8"
+                memberLevel = JavadocMemberLevel.PRIVATE
+                splitIndex(true)
 
                 val jetbrainsAnnotationsVersion = project.getProperty<String>("jetbrains_annotations_version")
 
