@@ -1,0 +1,59 @@
+name: Dry Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      vanilla-loom-enabled:
+        description: Loom Vanilla Enabled
+        type: boolean
+        default: true
+      vanilla-neogradle-enabled:
+        description: NeoGradle Vanilla Enabled
+        type: boolean
+        default: true
+      minecraft-version:
+        description: Minecraft Version
+        type: string
+      parchment-minecraft-version:
+        description: Parchment Minecraft Version
+        type: string
+      parchment-version:
+        description: Parchment Version
+        type: string
+      build-number:
+        description: Build Number
+        type: number
+        default: 1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+      - name: Build Vanilla Loom Javadoc
+        if: ${{ github.event.inputs.vanilla-loom-enabled }}
+        run: ./gradlew :mojmap-vanilla-loom:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }}
+        env:
+          PUBLISH_REPO: dist/
+      - name: Build Vanilla NeoGradle Javadoc
+        if: ${{ github.event.inputs.vanilla-neogradle-enabled }}
+        run: ./gradlew :mojmap-vanilla-neogradle:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }}
+        env:
+          PUBLISH_REPO: dist/
+      - name: Capture Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: |
+            dist/
+            */build/
