@@ -41,12 +41,12 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
       - name: Build Vanilla Loom Javadoc
-        if: ${{ github.event.inputs.vanilla-loom-enabled }}
+        if: ${{ github.event.inputs.vanilla-loom-enabled == 'true' }}
         run: ./gradlew :mojmap-vanilla-loom:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }}
         env:
           PUBLISH_REPO: dist/
       - name: Build Vanilla NeoGradle Javadoc
-        if: ${{ github.event.inputs.vanilla-neogradle-enabled }}
+        if: ${{ github.event.inputs.vanilla-neogradle-enabled == 'true' }}
         run: ./gradlew :mojmap-vanilla-neogradle:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }}
         env:
           PUBLISH_REPO: dist/
