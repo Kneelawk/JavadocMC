@@ -6,10 +6,11 @@ import net.neoforged.gradle.dsl.common.extensions.subsystems.Subsystems
 import net.neoforged.gradle.vanilla.runtime.extensions.VanillaRuntimeExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.tasks.Copy
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.ide.idea.model.ModuleLibrary
+import javax.inject.Inject
 
 abstract class JavadocMcExtension(val project: Project) {
     fun applyLoom() {
@@ -65,12 +66,20 @@ abstract class JavadocMcExtension(val project: Project) {
             add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
         }
 
-        val extractMc = project.tasks.create("extractMc", Copy::class) {
+        val extractMc = project.tasks.create("extractMc") {
             dependsOn("genSourcesWithVineflower")
 
-            into(project.layout.buildDirectory.dir("extractMc"))
+            abstract class Injected {
+                @get:Inject
+                abstract val fs: FileSystemOperations
+            }
 
-            project.afterEvaluate {
+            val injected = project.objects.newInstance<Injected>()
+
+            val outputDir = project.layout.buildDirectory.dir("extractMc")
+            outputs.dir(outputDir)
+
+            doLast {
                 val sourceMappings = mutableMapOf<String, MutableSet<String>>()
 
                 project.extensions.getByType(IdeaModel::class).module.resolveDependencies().forEach { dep ->
@@ -109,20 +118,24 @@ abstract class JavadocMcExtension(val project: Project) {
                     }
                 }
 
-                sources.forEach { source ->
-                    val sourceStr = if (source.startsWith("jar://")) {
-                        val endIndex = source.lastIndexOf('!')
+                injected.fs.copy {
+                    sources.forEach { source ->
+                        val sourceStr = if (source.startsWith("jar://")) {
+                            val endIndex = source.lastIndexOf('!')
 
-                        if (endIndex < 0) {
-                            source.substring("jar://".length)
+                            if (endIndex < 0) {
+                                source.substring("jar://".length)
+                            } else {
+                                source.substring("jar://".length, endIndex)
+                            }
                         } else {
-                            source.substring("jar://".length, endIndex)
+                            source
                         }
-                    } else {
-                        source
+
+                        from(project.zipTree(sourceStr))
                     }
 
-                    from(project.zipTree(sourceStr))
+                    into(outputDir)
                 }
             }
         }
