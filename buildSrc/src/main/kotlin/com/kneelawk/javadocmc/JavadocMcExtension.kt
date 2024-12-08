@@ -2,11 +2,13 @@ package com.kneelawk.javadocmc
 
 import com.kneelawk.getProperty
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.neoforged.gradle.dsl.common.extensions.subsystems.Subsystems
-import net.neoforged.gradle.vanilla.runtime.extensions.VanillaRuntimeExtension
+import net.neoforged.moddevgradle.dsl.NeoForgeExtension
+import net.neoforged.nfrtgradle.CreateMinecraftArtifacts
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.plugins.ide.idea.model.ModuleLibrary
@@ -140,48 +142,79 @@ abstract class JavadocMcExtension(val project: Project) {
             }
         }
 
-        project.tasks.named<PatchSourcesTask>("patchSources").configure {
+        val patchSources = project.tasks.create("patchSources", PatchSourcesTask::class) {
+            into(project.layout.buildDirectory.dir("patchedMc"))
             dependsOn(extractMc)
             for (root in extractMc.outputs.files) {
                 from(project.fileTree(root))
             }
         }
+
+        project.tasks.named<Javadoc>("mcJavadoc").configure {
+            dependsOn(patchSources)
+            source(patchSources.outputs)
+        }
     }
 
-    fun applyNeogradleVanilla() {
-        project.plugins.apply("net.neoforged.gradle.vanilla")
+    fun applyModDevVanilla() {
+        project.plugins.apply("net.neoforged.moddev")
 
         project.repositories {
             mavenCentral()
         }
 
-        val subsystemsEx = project.extensions.getByType(Subsystems::class)
-
-        subsystemsEx.apply {
-            parchment {
-                val parchment_mc_version: String by project
-                minecraftVersion = parchment_mc_version
-                val parchment_version: String by project
-                mappingsVersion = parchment_version
-            }
-        }
+        val neoforgeEx = project.extensions.getByType<NeoForgeExtension>()
 
         val minecraft_version: String by project
-        val minecraftDependency = project.dependencies.create("net.minecraft:client:$minecraft_version")
-        val jetbrains_annotations_version: String by project
+        val neoform_version: String by project
+        neoforgeEx.neoFormVersion.set("$minecraft_version-$neoform_version")
 
-        project.dependencies {
-            add("implementation", minecraftDependency)
-
-            add("compileOnly", "org.jetbrains:annotations:$jetbrains_annotations_version")
+        neoforgeEx.parchment {
+            val parchment_mc_version: String by project
+            minecraftVersion = parchment_mc_version
+            val parchment_version: String by project
+            mappingsVersion = parchment_version
         }
 
-        val vanillaRuntimeExtension = project.extensions.getByType(VanillaRuntimeExtension::class)
-        val runtimeDefinition = vanillaRuntimeExtension.definitions.values.first()
+        val createMinecraftArtifacts = project.tasks.named<CreateMinecraftArtifacts>("createMinecraftArtifacts")
 
-        project.tasks.named<PatchSourcesTask>("patchSources").configure {
-            dependsOn(runtimeDefinition.sourceJarTask)
-            from(project.zipTree(runtimeDefinition.sourceJarTask.get().output))
+        project.tasks.named<Javadoc>("mcJavadoc").configure {
+            dependsOn(createMinecraftArtifacts)
+            source(project.zipTree(createMinecraftArtifacts.get().sourcesArtifact))
+        }
+    }
+
+    fun applyModDevNeoForge() {
+        project.plugins.apply("net.neoforged.moddev")
+
+        project.repositories {
+            mavenCentral()
+        }
+
+        val neoforgeEx = project.extensions.getByType<NeoForgeExtension>()
+
+        val neoforge_version: String by project
+        neoforgeEx.version.set(neoforge_version)
+
+        neoforgeEx.parchment {
+            val parchment_mc_version: String by project
+            minecraftVersion = parchment_mc_version
+            val parchment_version: String by project
+            mappingsVersion = parchment_version
+        }
+
+        val createMinecraftArtifacts = project.tasks.named<CreateMinecraftArtifacts>("createMinecraftArtifacts")
+
+        val filterMc = project.tasks.create<Copy>("filterMc") {
+            dependsOn(createMinecraftArtifacts)
+            from(project.zipTree(createMinecraftArtifacts.get().sourcesArtifact))
+            exclude("assets/**", "data/**", "reports/**", "META-INF/**", "*.json", "*.png", "*.mcmeta", "forge.sas", "forge.exc", "forge.srg")
+            into(project.layout.buildDirectory.dir("filterMc"))
+        }
+
+        project.tasks.named<Javadoc>("mcJavadoc").configure {
+            dependsOn(filterMc)
+            source(filterMc.outputs)
         }
     }
 }

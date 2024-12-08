@@ -18,8 +18,8 @@ dependencies {
     val fabric_loom_version: String by project
     implementation("fabric-loom:fabric-loom.gradle.plugin:$fabric_loom_version")
 
-    val neogradle_version: String by project
-    implementation("net.neoforged.gradle.vanilla:net.neoforged.gradle.vanilla.gradle.plugin:$neogradle_version")
+    val moddev_version: String by project
+    implementation("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:$moddev_version")
 }
 
 gradlePlugin {

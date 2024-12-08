@@ -34,14 +34,7 @@ class JavadocMcPlugin : Plugin<Project> {
                 "${minecraftVersion}+parchment.${parchmentMcVersion}-${parchmentVersion}-build.${buildNumber}"
         }
 
-        val patchSources = project.tasks.create("patchSources", PatchSourcesTask::class) {
-            into(project.layout.buildDirectory.dir("patchedMc"))
-        }
-
         val mcJavadoc = project.tasks.create("mcJavadoc", Javadoc::class) {
-            dependsOn(patchSources)
-            source(patchSources.outputs)
-
             options.encoding("UTF-8")
 
             (options as StandardJavadocDocletOptions).apply {

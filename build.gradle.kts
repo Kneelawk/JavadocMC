@@ -1,6 +1,6 @@
 plugins {
     id("fabric-loom") apply false
-    id("net.neoforged.gradle.vanilla") apply false
+    id("net.neoforged.moddev") apply false
 }
 
 tasks.create("clean", Delete::class) {

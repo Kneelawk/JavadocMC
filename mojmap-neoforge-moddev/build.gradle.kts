@@ -4,7 +4,7 @@ plugins {
 }
 
 javadocMc {
-    applyNeogradleVanilla()
+    applyModDevNeoForge()
 }
 
 kpublish {

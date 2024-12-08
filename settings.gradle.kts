@@ -19,9 +19,8 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        val neogradle_version: String by settings
-        id("net.neoforged.gradle.vanilla") version neogradle_version
-        id("net.neoforged.gradle.userdev") version neogradle_version
+        val moddev_version: String by settings
+        id("net.neoforged.moddev") version moddev_version
         val fabric_loom_version: String by settings
         id("fabric-loom") version fabric_loom_version
         val versioning_version: String by settings
@@ -34,4 +33,5 @@ pluginManagement {
 rootProject.name = "javadoc-mc"
 
 include("mojmap-vanilla-loom")
-include("mojmap-vanilla-neogradle")
+include("mojmap-vanilla-moddev")
+include("mojmap-neoforge-moddev")

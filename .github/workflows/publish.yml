@@ -6,13 +6,23 @@ on:
       vanilla-loom-enabled:
         description: Loom Vanilla Enabled
         type: boolean
+        default: false
+      vanilla-moddev-enabled:
+        description: ModDev Vanilla Enabled
+        type: boolean
         default: true
-      vanilla-neogradle-enabled:
-        description: NeoGradle Vanilla Enabled
+      neoforge-moddev-enabled:
+        description: ModDev Vanilla Enabled
         type: boolean
         default: true
       minecraft-version:
         description: Minecraft Version
+        type: string
+      neoform-version:
+        description: NeoForm Version
+        type: string
+      neoforge-version:
+        description: NeoForge Version
         type: string
       parchment-minecraft-version:
         description: Parchment Minecraft Version
@@ -43,6 +53,9 @@ jobs:
       - name: Build Vanilla Loom Javadoc
         if: ${{ github.event.inputs.vanilla-loom-enabled == 'true' }}
         run: ./gradlew :mojmap-vanilla-loom:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
-      - name: Build Vanilla NeoGradle Javadoc
-        if: ${{ github.event.inputs.vanilla-neogradle-enabled == 'true' }}
-        run: ./gradlew :mojmap-vanilla-neogradle:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
+      - name: Build Vanilla ModDev Javadoc
+        if: ${{ github.event.inputs.vanilla-moddev-enabled == 'true' }}
+        run: ./gradlew :mojmap-vanilla-moddev:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pneoform_version=${{ github.event.inputs.neoform-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
+      - name: Build NeoForge ModDev Javadoc
+        if: ${{ github.event.inputs.neoforge-moddev-enabled == 'true' }}
+        run: ./gradlew :mojmap-neoforge-moddev:publish -Pminecraft_version=${{ github.event.inputs.minecraft-version }} -Pneoforge_version=${{ github.event.inputs.neoforge-version }} -Pparchment_mc_version=${{ github.event.inputs.parchment-minecraft-version }} -Pparchment_version=${{ github.event.inputs.parchment-version }} -Pbuild_number=${{ github.event.inputs.build-number }} -PkneelawkUsername=${{ secrets.MAVEN_USERNAME }} -PkneelawkPassword=${{ secrets.MAVEN_PASSWORD }}
