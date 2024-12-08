@@ -185,6 +185,13 @@ abstract class JavadocMcExtension(val project: Project) {
     }
 
     fun applyModDevNeoForge() {
+        val neoforge_version: String by project
+        val parchment_mc_version: String by project
+        val parchment_version: String by project
+        val build_number: String by project
+        project.version =
+            "${neoforge_version}+parchment.${parchment_mc_version}-${parchment_version}-build.${build_number}"
+
         project.plugins.apply("net.neoforged.moddev")
 
         project.repositories {
@@ -193,13 +200,10 @@ abstract class JavadocMcExtension(val project: Project) {
 
         val neoforgeEx = project.extensions.getByType<NeoForgeExtension>()
 
-        val neoforge_version: String by project
         neoforgeEx.version.set(neoforge_version)
 
         neoforgeEx.parchment {
-            val parchment_mc_version: String by project
             minecraftVersion = parchment_mc_version
-            val parchment_version: String by project
             mappingsVersion = parchment_version
         }
 
@@ -208,7 +212,18 @@ abstract class JavadocMcExtension(val project: Project) {
         val filterMc = project.tasks.create<Copy>("filterMc") {
             dependsOn(createMinecraftArtifacts)
             from(project.zipTree(createMinecraftArtifacts.get().sourcesArtifact))
-            exclude("assets/**", "data/**", "reports/**", "META-INF/**", "*.json", "*.png", "*.mcmeta", "forge.sas", "forge.exc", "forge.srg")
+            exclude(
+                "assets/**",
+                "data/**",
+                "reports/**",
+                "META-INF/**",
+                "*.json",
+                "*.png",
+                "*.mcmeta",
+                "forge.sas",
+                "forge.exc",
+                "forge.srg"
+            )
             into(project.layout.buildDirectory.dir("filterMc"))
         }
 
