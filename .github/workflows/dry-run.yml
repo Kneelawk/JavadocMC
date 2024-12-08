@@ -11,6 +11,10 @@ on:
         description: ModDev Vanilla Enabled
         type: boolean
         default: true
+      neoforge-moddev-enabled:
+        description: ModDev NeoForge Enabled
+        type: boolean
+        default: true
       minecraft-version:
         description: Minecraft Version
         type: string
